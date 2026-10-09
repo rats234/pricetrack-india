@@ -1,0 +1,139 @@
+body {
+  width: 320px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 12px;
+  color: #1a1a1a;
+}
+
+h1 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+#product-section {
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.product-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.product-meta {
+  color: #555;
+}
+
+#actions {
+  display: flex;
+  gap: 6px;
+}
+
+#find-cheaper-btn,
+#google-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#find-cheaper-btn {
+  background: #1a73e8;
+  color: white;
+}
+
+#find-cheaper-btn:disabled {
+  background: #9ec1f2;
+  cursor: default;
+}
+
+#google-btn {
+  background: #fff;
+  color: #1a73e8;
+  border: 1px solid #1a73e8;
+}
+
+#google-btn:disabled {
+  background: #f1f1f1;
+  color: #999;
+  border-color: #ddd;
+  cursor: default;
+}
+
+#results {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.result {
+  display: block;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  text-decoration: none;
+  color: inherit;
+}
+
+.result.confirmed {
+  border-color: #34a853;
+  background: #f0fbf2;
+}
+
+.result.possible {
+  border-color: #fbbc04;
+  background: #fffbea;
+}
+
+.result.current {
+  border-color: #ccc;
+  background: #fafafa;
+  cursor: default;
+}
+
+.result.is-best-value {
+  border-width: 2px;
+  box-shadow: 0 0 0 1px #673ab7;
+}
+
+.result-retailer {
+  font-weight: 600;
+  margin-bottom: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #eee;
+}
+
+.badge-cheapest {
+  background: #e3f2fd;
+  color: #1a73e8;
+}
+
+.badge-best-value {
+  background: #ede7f6;
+  color: #673ab7;
+}
+
+.best-value-note {
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 8px;
+  border-radius: 6px;
+  background: #ede7f6;
+  color: #4a2f82;
+  margin-bottom: 4px;
+}
