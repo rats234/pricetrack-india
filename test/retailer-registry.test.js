@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { buildSearchQueries } from '../src/shared/product-model.js';
 import { RETAILERS, getRetailer, getOtherRetailers } from '../src/shared/retailer-registry.js';
 
 const product = {
@@ -82,5 +83,35 @@ describe('buildSearchQuery', () => {
       ).searchParams.get('q'),
     );
     expect(q).toBe('Roadster Men Solid Round Neck T-shirt');
+  });
+});
+
+describe('buildSearchQueries', () => {
+  const phone = {
+    brand: 'Redmi',
+    model: 'Note 15 SE',
+    title: 'Redmi Note 15 SE 5G (Crimson Reserve, 8GB RAM, 128GB Storage)',
+    variant: { color: 'Crimson Reserve', size: '', storage: '128GB' },
+  };
+
+  it('puts everything known about the product in the first query, without repeating words', () => {
+    const [full] = buildSearchQueries(phone);
+    expect(full).toContain('Redmi');
+    expect(full).toContain('Note');
+    expect(full).toContain('8GB');
+    expect(full).toContain('128GB');
+    expect(full).toContain('Crimson');
+    expect(full.split(' ').filter((w) => w.toLowerCase() === 'redmi')).toHaveLength(1);
+  });
+
+  it('falls back to a shorter compact query', () => {
+    const queries = buildSearchQueries(phone);
+    expect(queries).toHaveLength(2);
+    expect(queries[1].length).toBeLessThan(queries[0].length);
+  });
+
+  it('uses a custom query in the retailer search URL', () => {
+    const url = getRetailer('flipkart').buildSearchUrl(phone, 'custom words');
+    expect(new URL(url).searchParams.get('q')).toBe('custom words');
   });
 });

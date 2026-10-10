@@ -27,7 +27,9 @@ scrape-and-compare pipeline on purpose.
 2. Clicking "Find cheaper" in the popup sends that signature to the background
    service worker.
 3. The service worker opens an inactive background tab per other enabled retailer,
-   builds a search URL from the extracted product, and injects a small scraper
+   searching first with everything known about the product (brand, model, full
+   title, colour, storage) and, if that finds no acceptable match, retrying once
+   with a shorter brand/model query, and injects a small scraper
    function (`src/background/search-scrapers/`) to read candidate results off the
    real rendered search-results page, then closes the tab.
 4. A deterministic, rule-based matching engine (`src/shared/matching-engine.js`)

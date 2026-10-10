@@ -1,5 +1,6 @@
 import { getOtherRetailers } from '../shared/retailer-registry.js';
-import { buildComparison } from '../shared/matching-engine.js';
+import { buildComparison, rankCandidates } from '../shared/matching-engine.js';
+import { buildSearchQueries } from '../shared/product-model.js';
 import { amazonSearchScraper } from './search-scrapers/amazon.js';
 import { flipkartSearchScraper } from './search-scrapers/flipkart.js';
 import { genericSearchScraper } from './search-scrapers/generic.js';
@@ -50,11 +51,26 @@ async function findCheaper(sourceProduct) {
   return buildComparison(sourceProduct, candidatesByRetailer);
 }
 
+// Tries the richest query first (everything known about the product); if that
+// returns no acceptable match on this retailer, falls back to the compact one
+// and merges the results. At most two page loads per retailer.
 async function fetchCandidatesForRetailer(retailer, sourceProduct) {
+  const queries = buildSearchQueries(sourceProduct);
+  let merged = [];
+  for (const query of queries) {
+    const batch = await searchOnce(retailer, sourceProduct, query);
+    const seenUrls = new Set(merged.map((c) => c.url));
+    merged = merged.concat(batch.filter((c) => !seenUrls.has(c.url)));
+    if (rankCandidates(sourceProduct, merged).length > 0) break;
+  }
+  return merged;
+}
+
+async function searchOnce(retailer, sourceProduct, query) {
   const scraperFn = SCRAPERS[retailer.id];
   if (!scraperFn) return [];
 
-  const url = retailer.buildSearchUrl(sourceProduct);
+  const url = retailer.buildSearchUrl(sourceProduct, query);
   const tab = await chrome.tabs.create({ url, active: false });
 
   try {

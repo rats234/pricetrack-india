@@ -61,3 +61,30 @@ export function buildSearchQuery(product) {
   const q = parts.filter(Boolean).join(' ').trim();
   return q || product.title || '';
 }
+
+// Ordered search texts to try on another retailer, richest first: brand + model
+// + the full title + every variant detail, then the compact brand/model/variant
+// query. The richest text finds the exact item when the other site indexes it
+// the same way; very long queries often return nothing on a different
+// retailer, so the caller falls back to the next one when no match comes back.
+export function buildSearchQueries(product) {
+  const seen = new Set();
+  const words = [];
+  const add = (text) => {
+    for (const raw of String(text || '').split(/\s+/)) {
+      const w = raw.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+      const key = normalizeText(w);
+      if (!w || !key || seen.has(key)) continue;
+      seen.add(key);
+      words.push(w);
+    }
+  };
+  add(product.brand);
+  add(product.model);
+  add(product.title);
+  add(product.variant?.storage);
+  add(product.variant?.color);
+  const full = words.slice(0, 16).join(' ').trim();
+  const compact = buildSearchQuery(product);
+  return [...new Set([full, compact].filter(Boolean))];
+}

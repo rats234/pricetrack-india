@@ -5,16 +5,16 @@ export const RETAILERS = [
     id: 'amazon',
     name: 'Amazon India',
     hostPattern: /(^|\.)amazon\.in$/,
-    buildSearchUrl(product) {
-      return `https://www.amazon.in/s?k=${encodeURIComponent(buildSearchQuery(product))}`;
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      return `https://www.amazon.in/s?k=${encodeURIComponent(query)}`;
     },
   },
   {
     id: 'flipkart',
     name: 'Flipkart',
     hostPattern: /(^|\.)flipkart\.com$/,
-    buildSearchUrl(product) {
-      return `https://www.flipkart.com/search?q=${encodeURIComponent(buildSearchQuery(product))}`;
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      return `https://www.flipkart.com/search?q=${encodeURIComponent(query)}`;
     },
   },
   // Everything below is UNVERIFIED against live markup — see README "Known
@@ -26,8 +26,8 @@ export const RETAILERS = [
     id: 'myntra',
     name: 'Myntra',
     hostPattern: /(^|\.)myntra\.com$/,
-    buildSearchUrl(product) {
-      const q = encodeURIComponent(buildSearchQuery(product));
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      const q = encodeURIComponent(query);
       return `https://www.myntra.com/${q}?rawQuery=${q}`;
     },
   },
@@ -35,16 +35,16 @@ export const RETAILERS = [
     id: 'ajio',
     name: 'AJIO',
     hostPattern: /(^|\.)ajio\.com$/,
-    buildSearchUrl(product) {
-      return `https://www.ajio.com/search/?text=${encodeURIComponent(buildSearchQuery(product))}`;
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      return `https://www.ajio.com/search/?text=${encodeURIComponent(query)}`;
     },
   },
   {
     id: 'croma',
     name: 'Croma',
     hostPattern: /(^|\.)croma\.com$/,
-    buildSearchUrl(product) {
-      const q = encodeURIComponent(buildSearchQuery(product));
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      const q = encodeURIComponent(query);
       return `https://www.croma.com/searchB?q=${q}:relevance&text=${q}`;
     },
   },
@@ -52,10 +52,10 @@ export const RETAILERS = [
     id: 'reliance-digital',
     name: 'Reliance Digital',
     hostPattern: /(^|\.)reliancedigital\.in$/,
-    buildSearchUrl(product) {
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
       // Confirmed live 2026-10-09 via the site's own search box. The earlier
       // guessed /search?q= format returns a "page not found" page.
-      return `https://www.reliancedigital.in/products?q=${encodeURIComponent(buildSearchQuery(product))}`;
+      return `https://www.reliancedigital.in/products?q=${encodeURIComponent(query)}`;
     },
   },
 ];
