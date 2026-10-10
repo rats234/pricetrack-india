@@ -115,3 +115,15 @@ describe('buildSearchQueries', () => {
     expect(new URL(url).searchParams.get('q')).toBe('custom words');
   });
 });
+
+describe('buildSearchQueries punctuation', () => {
+  it('splits brackets so "Mic(Charcoal Black)" becomes clean words', () => {
+    const [full] = buildSearchQueries({
+      brand: 'boAt',
+      model: '',
+      title: 'boAt Bassheads 102 in Ear Wired Earphones with Mic(Charcoal Black)',
+      variant: { color: 'Black', size: '', storage: '' },
+    });
+    expect(full).toBe('boAt Bassheads 102 in Ear Wired Earphones with Mic Charcoal Black');
+  });
+});

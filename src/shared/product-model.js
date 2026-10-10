@@ -51,6 +51,7 @@ export function buildSearchQuery(product) {
     // dropping any brand words already added above.
     const brandWords = new Set(tokenize(product.brand));
     const words = product.title
+      .replace(/[()\[\],;|]/g, ' ')
       .split(/\s+/)
       .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
       .filter((w) => w && !brandWords.has(normalizeText(w)));
@@ -71,7 +72,7 @@ export function buildSearchQueries(product) {
   const seen = new Set();
   const words = [];
   const add = (text) => {
-    for (const raw of String(text || '').split(/\s+/)) {
+    for (const raw of String(text || '').replace(/[()\[\],;|]/g, ' ').split(/\s+/)) {
       const w = raw.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
       const key = normalizeText(w);
       if (!w || !key || seen.has(key)) continue;
