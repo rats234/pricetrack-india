@@ -19,4 +19,4 @@ The last product it looked at and your retailer settings are stored on your devi
 It does not log in for you, read your accounts, cookies or payment details, add anything to a cart, or complete a purchase.
 
 ## Contact
-[YOUR CONTACT EMAIL]
+rats234@gmail.com

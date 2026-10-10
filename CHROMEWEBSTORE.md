@@ -20,7 +20,7 @@ To use it: open a product page on Amazon.in, Flipkart, Myntra, AJIO, Croma or Re
 
 PriceTrack doesn't collect, store remotely, or sell any personal data. Everything — the product it last looked at, your settings — stays on your own device. It never asks for your accounts, payment details, or browsing history, and it never completes a purchase on your behalf.
 
-Found a bug or have feedback? [FILL IN: support contact/issue tracker URL]
+Found a bug or have feedback? Email rats234@gmail.com
 
 **Category** [REQUIRED]
 Shopping
@@ -96,7 +96,7 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 [FILL IN]
 
 **Contact Email** [REQUIRED]
-[FILL IN — this is displayed publicly on the store listing, so consider whether to use a dedicated address rather than a personal one]
+rats234@gmail.com (displayed publicly on the store listing)
 
 **Support URL / Email** [RECOMMENDED]
 [FILL IN]
