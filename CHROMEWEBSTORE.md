@@ -1,6 +1,6 @@
 # Chrome Web Store Listing — PriceTrack India
 
-> Last Updated: 2026-10-04
+> Last Updated: 2026-10-10
 
 ## Store Listing
 
@@ -9,14 +9,14 @@ PriceTrack India
 
 **Short Description** [REQUIRED]
 <!-- Max 132 characters. -->
-Checks if the product you're viewing on Amazon.in or Flipkart is cheaper on the other site, with a clear confidence label.
+Checks if the product you're viewing is cheaper on another Indian store: Amazon, Flipkart, Myntra, AJIO, Croma or Reliance Digital.
 
 **Detailed Description** [REQUIRED]
 PriceTrack India checks whether the product you're currently viewing is cheaper on another supported Indian retailer.
 
-Click "Find cheaper" on a product page and PriceTrack reads the product's details, searches the other supported retailer, and tells you whether it found the same item or just a similar one — labeled "Same product" or "Possible match, verify" so you always know how sure it is before you trust a price comparison. It shows the retailer, price, and savings, with a link straight to the listing.
+Click "Find cheaper" on a product page and PriceTrack reads the product's details, searches the other supported retailers, and tells you whether it found the same item or just a similar one — labeled "Same product" or "Possible match, verify" so you always know how sure it is before you trust a price comparison. It shows the retailer, price, and savings, with a link straight to the listing.
 
-To use it: open a product page on Amazon.in or Flipkart, click the PriceTrack icon, then click "Find cheaper." PriceTrack only looks things up when you click the button — it never runs in the background or on a timer.
+To use it: open a product page on Amazon.in, Flipkart, Myntra, AJIO, Croma or Reliance Digital, click the PriceTrack icon, then click "Find cheaper." PriceTrack only looks things up when you click the button — it never runs in the background or on a timer.
 
 PriceTrack doesn't collect, store remotely, or sell any personal data. Everything — the product it last looked at, your settings — stays on your own device. It never asks for your accounts, payment details, or browsing history, and it never completes a purchase on your behalf.
 
@@ -52,10 +52,10 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 | `tabs` | permissions | Needed to (a) find the active tab's id so the popup can ask its content script for the extracted product, and (b) open and then close the background tab used to search the other retailer during a "Find cheaper" lookup. |
 | `https://www.amazon.in/*` | host_permissions | The content script that extracts product details (title, brand, price, etc.) runs on Amazon.in product pages, and background search tabs are opened on Amazon.in when Amazon is the comparison target. |
 | `https://www.flipkart.com/*` | host_permissions | Same as above, for Flipkart product and search pages. |
-| `https://www.myntra.com/*` | host_permissions | Same as above, for Myntra product and search pages. **Not yet verified against live Myntra pages** — see README "Known MVP limitations" before enabling this in the store listing. |
-| `https://www.ajio.com/*` | host_permissions | Same as above, for AJIO. **Not yet verified against live AJIO pages.** |
-| `https://www.croma.com/*` | host_permissions | Same as above, for Croma. **Not yet verified against live Croma pages.** |
-| `https://www.reliancedigital.in/*` | host_permissions | Same as above, for Reliance Digital. **Not yet verified against live Reliance Digital pages**, including the search-URL format itself. |
+| `https://www.myntra.com/*` | host_permissions | Same as above, for Myntra product and search pages. |
+| `https://www.ajio.com/*` | host_permissions | Same as above, for AJIO. |
+| `https://www.croma.com/*` | host_permissions | Same as above, for Croma. |
+| `https://www.reliancedigital.in/*` | host_permissions | Same as above, for Reliance Digital. |
 
 ## Privacy & Data Use
 
@@ -83,7 +83,7 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 ## Privacy Policy
 
 **Privacy Policy URL** [REQUIRED]
-[FILL IN — must be a live, publicly accessible URL before submission. Since there's no data transmission to disclose beyond "nothing leaves the device," a one-paragraph policy hosted on GitHub Pages or similar is sufficient — see `.agents/skills/chrome-extensions/references/webstore/privacy-policy.md` for a template.]
+[FILL IN — text is written in `docs/privacy.md`; it must be hosted at a live public URL (e.g. GitHub Pages) and the contact email filled in before submission.]
 
 ## Distribution
 
@@ -109,12 +109,12 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
 | 0.1.0 | 2026-10-04 | Initial MVP: Amazon India + Flipkart product extraction, cross-retailer search, rule-based same-product matching with confidence labeling. Not yet submitted. | Draft |
-| 0.2.0 (unreleased) | 2026-10-05 | Added Myntra, AJIO, Croma, Reliance Digital via a generic JSON-LD extractor + generic price-heuristic scraper — **unverified against live pages**, pending manual testing. Fixed a real matching-engine bug (false "cheaper" result comparing different RAM/storage phone variants) and several Amazon/Flipkart extraction bugs found via live-page testing across electronics/apparel/beauty categories. | Draft |
+| 0.2.0 | 2026-10-10 | Added Myntra, AJIO, Croma, Reliance Digital; search scraping and product extraction checked against live pages (fixed Reliance Digital search URL, Myntra price parsing, malformed JSON-LD handling). Fixed a matching-engine false "cheaper" result across RAM/storage variants. Build with `scripts/build-zip.sh`. | Ready to submit once the [FILL IN] items are done |
 
 ## Review Notes
 
 ### Known Issues / Limitations
-- Of the 6 retailers implemented, only Amazon India and Flipkart are verified against real, live pages. Myntra, AJIO, Croma, and Reliance Digital use a generic extractor/scraper and are **untested against real markup** (their bot protection blocked the same verification approach) — do not advertise these 4 in the public store listing copy until manually confirmed working. See README.md "Known MVP limitations" for specifics, including that Reliance Digital's search-URL format itself is an unconfirmed guess.
+- All 6 retailers were checked against live search and product pages on 2026-10-09 (one search + one product each). The popup click-through on Myntra/AJIO/Croma/Reliance Digital had not been run by hand at that point. AJIO and Croma ratings are not extracted. See README.md "Known MVP limitations".
 - No price-drop notifications yet.
 - Shown prices are listed prices; shipping/fees aren't computed.
 - Icons are placeholder artwork generated programmatically, not final branded assets — replace before submission.
