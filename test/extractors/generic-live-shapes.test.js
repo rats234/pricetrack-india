@@ -13,7 +13,8 @@ describe('generic extractor on live-observed JSON-LD quirks', () => {
     const p = runExtractor({ fixture: 'myntra-product.html', url: 'https://www.myntra.com/x/43102955/buy', scripts: scripts('myntra') });
     expect(p.title).toBe("Nike Revolution 7 Men's Road Running Shoes");
     expect(p.brand).toBe('Nike');
-    expect(p.model).toBe('43102955');
+    // Myntra's mpn/sku is its own style id, not a manufacturer model.
+    expect(p.model).toBe('');
     expect(p.price).toBe(2439);
     expect(p.rating).toBe(4.3);
     expect(p.ratingCount).toBe(1204);

@@ -34,7 +34,9 @@
       }
 
       const gtin = jsonLd.gtin13 || jsonLd.gtin || jsonLd.gtin12 || jsonLd.gtin8 || '';
-      const model = jsonLd.model || jsonLd.mpn || '';
+      // Myntra's mpn/sku is its own style id, not a manufacturer model; using it
+      // polluted matching against other retailers' titles.
+      const model = jsonLd.model || (options.ignoreMpn ? '' : jsonLd.mpn) || '';
       const rawModel = typeof model === 'string' ? model : model?.name || '';
 
       const variant = {

@@ -39,13 +39,19 @@ function titleOverlapScore(aTokens, bTokens) {
 // make the two sides' counts look mismatched and skip the comparison
 // entirely. Only fires when both sides mention a unit the same number of
 // *distinct* times — otherwise there's not enough signal to safely compare.
-const SPEC_RE = /(\d+)\s?(gb|tb|mb|mah|inch|cm|mm|ml|kg|w)\b/gi;
+// Beyond electronics units, covers beauty/grocery/home quantities (g, l, oz,
+// pieces) and multipacks — "100 g" vs "200 g" or "pack of 2" vs "pack of 3" are
+// different products that otherwise share nearly every title word.
+const SPEC_RE = /(\d+(?:\.\d+)?)\s?(gb|tb|mb|mah|inch|cm|mm|ml|kg|gms?|g|ltrs?|l|oz|pcs|pieces|tablets|capsules|w)\b|\b(pack|set|combo) of (\d+)\b/gi;
+const UNIT_ALIASES = { gm: 'g', gms: 'g', ltr: 'l', ltrs: 'l', pieces: 'pcs' };
 
 function extractSpecsByUnit(text) {
   const specs = {};
   for (const m of (text || '').toLowerCase().matchAll(SPEC_RE)) {
-    const [, value, unit] = m;
-    (specs[unit] ??= new Set()).add(value);
+    const value = m[1] ?? m[4];
+    const rawUnit = m[2] ?? 'pack';
+    const unit = UNIT_ALIASES[rawUnit] ?? rawUnit;
+    (specs[unit] ??= new Set()).add(String(Number(value)));
   }
   return specs;
 }
@@ -86,12 +92,22 @@ export function scoreCandidate(source, candidate) {
     return { score: 0, tier: 'spec-conflict', confidence: 'none' };
   }
 
-  const sourceTokens = tokenize(sourceSpecText);
+  let sourceTokens = tokenize(sourceSpecText);
   const candidateTokens = tokenize(`${candidate.brand || ''} ${candidate.title || ''}`);
 
   const sourceBrand = normalizeText(source.brand);
   const candidateBrand = normalizeText(candidate.brand || candidate.title);
   const brandMatch = !!sourceBrand && candidateBrand.includes(sourceBrand);
+
+  // Amazon and Flipkart search cards state the product name without the brand
+  // (it lives in a separate element), so a brandless candidate title would
+  // otherwise be penalized for every brand word in the source. The search was
+  // already made with the brand, so compare on the remaining words; the result
+  // still tops out at "possible" and gets no brand bonus.
+  if (sourceBrand && !brandMatch && !candidate.brand) {
+    const brandTokens = new Set(tokenize(source.brand));
+    sourceTokens = sourceTokens.filter((t) => !brandTokens.has(t));
+  }
 
   if (source.model && brandMatch) {
     const sourceModel = normalizeText(source.model);

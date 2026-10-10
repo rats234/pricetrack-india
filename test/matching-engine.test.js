@@ -261,3 +261,46 @@ describe('buildComparison', () => {
     expect(bestValue).toBeNull();
   });
 });
+
+// Non-electronics categories: beauty/grocery quantities and multipacks.
+describe('spec conflicts outside electronics', () => {
+  const lotion = {
+    retailerId: 'amazon',
+    title: 'Nivea Soft Moisturising Cream 100 g',
+    brand: 'Nivea',
+    model: '',
+    gtin: '',
+    variant: { color: '', size: '', storage: '' },
+    price: 250,
+  };
+
+  it('rejects the same product line in a different gram size', () => {
+    const bigger = { title: 'Nivea Soft Moisturising Cream 200 g', brand: 'Nivea', price: 400 };
+    expect(scoreCandidate(lotion, bigger).tier).toBe('spec-conflict');
+  });
+
+  it('treats "100 gm" and "100 g" as the same quantity', () => {
+    const same = { title: 'Nivea Soft Moisturising Cream 100 gm', brand: 'Nivea', price: 230 };
+    expect(scoreCandidate(lotion, same).confidence).toBe('possible');
+  });
+
+  it('rejects a different multipack size and different volume units', () => {
+    const shampoo = { ...lotion, title: 'Dove Shampoo 340 ml (Pack of 2)', brand: 'Dove' };
+    expect(scoreCandidate(shampoo, { title: 'Dove Shampoo 340 ml (Pack of 3)', brand: 'Dove' }).tier).toBe('spec-conflict');
+    expect(scoreCandidate(shampoo, { title: 'Dove Shampoo 650 ml (Pack of 2)', brand: 'Dove' }).tier).toBe('spec-conflict');
+  });
+
+  it('matches an apparel listing with no model or GTIN as a possible match only', () => {
+    const tee = { retailerId: 'myntra', title: 'Roadster Men Black Solid Round Neck T-shirt', brand: 'Roadster', model: '', gtin: '', variant: { color: 'Black', size: 'M', storage: '' }, price: 399 };
+    const r = scoreCandidate(tee, { title: 'Roadster Men Solid Round Neck Black T-shirt', brand: 'Roadster', price: 349 });
+    expect(r.confidence).toBe('possible');
+  });
+});
+
+describe('brandless search-card titles (Amazon/Flipkart)', () => {
+  it('still reaches "possible" when the candidate title omits the brand', () => {
+    const src = { retailerId: 'myntra', title: 'Roadster Men Solid Round Neck Pure Cotton Black T-Shirt', brand: 'Roadster', model: '', gtin: '', variant: { color: '', size: '', storage: '' }, price: 173 };
+    const r = scoreCandidate(src, { title: 'Men Solid Round Neck Pure Cotton Black T-Shirt', price: 179 });
+    expect(r.confidence).toBe('possible');
+  });
+});

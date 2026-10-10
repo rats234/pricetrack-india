@@ -77,7 +77,15 @@ export function flipkartSearchScraper() {
       title: title.trim(),
       specs,
       price,
-      url: new URL(href, location.origin).href.split('?')[0],
+      url: (() => {
+        // pid/lid select the specific variant (e.g. 100 ml vs 600 ml); without
+        // them Flipkart opens a different default variant of the same product.
+        const u = new URL(href, location.origin);
+        const keep = new URLSearchParams();
+        for (const k of ['pid', 'lid']) if (u.searchParams.get(k)) keep.set(k, u.searchParams.get(k));
+        const qs = keep.toString();
+        return u.origin + u.pathname + (qs ? `?${qs}` : '');
+      })(),
       thumbnail: container?.querySelector('img')?.getAttribute('src') || '',
       rating,
       ratingCount,

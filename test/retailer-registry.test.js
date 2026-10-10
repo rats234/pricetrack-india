@@ -68,3 +68,19 @@ describe('reliance digital search URL', () => {
     expect(new URL(url).searchParams.get('q')).toContain('boAt');
   });
 });
+
+describe('buildSearchQuery', () => {
+  it('does not repeat the brand or split hyphenated words', () => {
+    const q = decodeURIComponent(
+      new URL(
+        getRetailer('flipkart').buildSearchUrl({
+          brand: 'Roadster',
+          model: '',
+          title: 'Roadster Men Solid Round Neck T-shirt',
+          variant: { color: '', size: '', storage: '' },
+        }),
+      ).searchParams.get('q'),
+    );
+    expect(q).toBe('Roadster Men Solid Round Neck T-shirt');
+  });
+});

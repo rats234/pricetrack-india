@@ -37,8 +37,12 @@
     const brand = (typeof rawBrand === 'string' ? rawBrand : '').trim();
 
     const offer = Array.isArray(jsonLd.offers) ? jsonLd.offers[0] : jsonLd.offers;
+    // The first .a-price .a-offscreen can be a blank twister node (seen on
+    // apparel pages), so take the first one that actually has text.
     const priceFromDom =
-      document.querySelector('.a-price .a-offscreen')?.textContent ||
+      Array.from(document.querySelectorAll('#corePrice_feature_div .a-offscreen, .a-price .a-offscreen'))
+        .map((el) => el.textContent.trim())
+        .find(Boolean) ||
       document.querySelector('#priceblock_ourprice, #priceblock_dealprice')?.textContent;
     const price = parsePrice(offer?.price ?? priceFromDom);
 

@@ -17,4 +17,13 @@ describe('amazon extractor', () => {
     expect(product.price).toBe(19999);
     expect(product.currency).toBe('INR');
   });
+
+  it('skips a blank first price node and reads the real price (apparel layout)', () => {
+    const product = runExtractor({
+      fixture: 'amazon-apparel-blank-price.html',
+      url: 'https://www.amazon.in/dp/B0D8QGNV5Z',
+      scripts: ['src/content/extractors/common.js', 'src/content/extractors/amazon.js'],
+    });
+    expect(product.price).toBe(269);
+  });
 });

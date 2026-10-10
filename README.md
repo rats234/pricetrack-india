@@ -177,6 +177,24 @@ Live results after the fixes: search scraping returned correct titles, URLs and
 current prices on all four. Product-page extraction was correct on Myntra, Croma
 and Reliance Digital; on AJIO, price and brand are right.
 
+## Clothing and beauty testing (2026-10-10)
+
+Live-tested a T-shirt and a skincare cream across the supported sites. Fixed:
+Flipkart result links lost their `pid`/`lid` and opened a different size
+(600 ml instead of 100 ml); Amazon apparel prices came back empty (blank first
+price node); Myntra's internal style id was used as a "model" and diluted
+matching; the search query repeated the brand and split "T-shirt"; Amazon and
+Flipkart result titles omit the brand, which lowered match scores; the
+spec-conflict check now also covers g/l/oz/piece counts and "pack of N".
+
+Still weak for these categories: Flipkart cards and Myntra titles keep size
+outside the title, so a 50 ml or "Pack of 2" variant can slip through as a
+"possible match" (always labeled "verify"); colour/size aren't extracted on
+Amazon/Myntra/AJIO apparel pages; some Myntra/AJIO pages expose no rating;
+Croma/Reliance searches for non-electronics return unrelated items (filtered by
+the matcher). No GTIN or model exists for most clothing, so those matches can
+never be "confirmed".
+
 ## Known MVP limitations
 
 - **Remaining gaps on the four newer retailers:**

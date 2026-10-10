@@ -47,7 +47,14 @@ export function buildSearchQuery(product) {
   if (product.brand) parts.push(product.brand);
   if (product.model) parts.push(product.model);
   if (!product.model && product.title) {
-    parts.push(...tokenize(product.title).slice(0, 6));
+    // Use the title's own words (so "T-shirt" stays intact, unlike tokenize()),
+    // dropping any brand words already added above.
+    const brandWords = new Set(tokenize(product.brand));
+    const words = product.title
+      .split(/\s+/)
+      .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
+      .filter((w) => w && !brandWords.has(normalizeText(w)));
+    parts.push(...words.slice(0, 7));
   }
   if (product.variant?.storage) parts.push(product.variant.storage);
   if (product.variant?.color) parts.push(product.variant.color);
