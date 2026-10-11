@@ -180,6 +180,11 @@ const MIN_TRUSTED_RATING_COUNT = 10;
 // option is already the best call, i.e. nothing to trade off).
 export function buildComparison(source, candidatesByRetailer) {
   const cheaperResults = findCheaperAlternatives(source, candidatesByRetailer);
+  // Retailers that were searched but had no acceptable match (or couldn't be
+  // searched) — the popup lists these with manual-search links so "nothing
+  // shown" is never ambiguous.
+  const matchedIds = new Set(cheaperResults.map((r) => r.retailerId));
+  const notFound = Object.keys(candidatesByRetailer).filter((id) => !matchedIds.has(id));
 
   const options = [];
   if (typeof source.price === 'number') {
@@ -207,7 +212,7 @@ export function buildComparison(source, candidatesByRetailer) {
     });
   }
 
-  if (options.length === 0) return { options, cheapest: null, bestValue: null };
+  if (options.length === 0) return { options, cheapest: null, bestValue: null, notFound };
 
   const cheapest = options.reduce((a, b) => (b.price < a.price ? b : a));
 
@@ -224,5 +229,5 @@ export function buildComparison(source, candidatesByRetailer) {
     ? trustedNearCheapest.reduce((a, b) => (b.rating > a.rating ? b : a))
     : null;
 
-  return { options, cheapest, bestValue };
+  return { options, cheapest, bestValue, notFound };
 }

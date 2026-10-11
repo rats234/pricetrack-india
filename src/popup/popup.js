@@ -1,5 +1,5 @@
 import { getRetailer } from '../shared/retailer-registry.js';
-import { buildSearchQuery } from '../shared/product-model.js';
+import { buildSearchQuery, buildSearchQueries } from '../shared/product-model.js';
 
 const statusEl = document.getElementById('status');
 const findBtn = document.getElementById('find-cheaper-btn');
@@ -87,10 +87,14 @@ findBtn.addEventListener('click', async () => {
 
 function renderComparison(comparison) {
   resultsEl.innerHTML = '';
-  const { options, cheapest, bestValue } = comparison || {};
+  const { options, cheapest, bestValue, notFound = [] } = comparison || {};
 
   if (!options || options.length <= 1) {
-    resultsEl.textContent = 'No matching product found on other retailers.';
+    const msg = document.createElement('div');
+    msg.className = 'no-match';
+    msg.textContent = 'No matching product found on other retailers.';
+    resultsEl.appendChild(msg);
+    renderNotFound(notFound);
     return;
   }
 
@@ -106,6 +110,33 @@ function renderComparison(comparison) {
   for (const option of sorted) {
     resultsEl.appendChild(renderRow(option, { cheapest, bestValue }));
   }
+  renderNotFound(notFound);
+}
+
+// Lists retailers that were searched with no acceptable match, each linking to
+// that retailer's own search page so the user can double-check by hand. These
+// are plain user-clicked links — nothing is fetched until the user clicks.
+function renderNotFound(retailerIds) {
+  if (!retailerIds.length) return;
+  const box = document.createElement('div');
+  box.className = 'not-found';
+  const label = document.createElement('div');
+  label.className = 'not-found-label';
+  label.textContent = 'Not found — search manually:';
+  box.appendChild(label);
+  const [query] = buildSearchQueries(currentProduct);
+  for (const id of retailerIds) {
+    const retailer = getRetailer(id);
+    if (!retailer) continue;
+    const link = document.createElement('a');
+    link.className = 'not-found-link';
+    link.href = retailer.buildSearchUrl(currentProduct, query);
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = retailer.name;
+    box.appendChild(link);
+  }
+  resultsEl.appendChild(box);
 }
 
 function renderRow(option, { cheapest, bestValue }) {

@@ -304,3 +304,23 @@ describe('brandless search-card titles (Amazon/Flipkart)', () => {
     expect(r.confidence).toBe('possible');
   });
 });
+
+describe('buildComparison notFound', () => {
+  it('lists searched retailers that returned no acceptable match', () => {
+    const src = { retailerId: 'amazon', title: 'JBL Tune 110 Wired in Ear Earphones', brand: 'JBL', model: 'Tune 110', gtin: '', variant: {}, price: 1000 };
+    const { notFound, options } = buildComparison(src, {
+      flipkart: [{ title: 'Completely unrelated vacuum cleaner', price: 9000, url: 'https://x/1' }],
+      myntra: [],
+    });
+    expect(notFound.sort()).toEqual(['flipkart', 'myntra']);
+    expect(options).toHaveLength(1);
+  });
+
+  it('does not list a retailer that matched', () => {
+    const src = { retailerId: 'amazon', title: 'JBL Tune 110 Wired in Ear Earphones', brand: 'JBL', model: 'Tune 110', gtin: '', variant: {}, price: 1000 };
+    const { notFound } = buildComparison(src, {
+      flipkart: [{ title: 'JBL Tune 110 Wired in Ear Earphones', price: 900, url: 'https://x/1' }],
+    });
+    expect(notFound).toEqual([]);
+  });
+});
