@@ -6,6 +6,9 @@ import { JSDOM } from 'jsdom';
 import { genericSearchScraper } from '../src/background/search-scrapers/generic.js';
 import { myntraSearchScraper } from '../src/background/search-scrapers/myntra.js';
 import { ajioSearchScraper } from '../src/background/search-scrapers/ajio.js';
+import { nykaaSearchScraper } from '../src/background/search-scrapers/nykaa.js';
+import { purplleSearchScraper } from '../src/background/search-scrapers/purplle.js';
+import { tiraSearchScraper } from '../src/background/search-scrapers/tira.js';
 import { relianceDigitalSearchScraper } from '../src/background/search-scrapers/reliance-digital.js';
 
 const fixtures = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures');
@@ -52,5 +55,30 @@ describe('retailer search scrapers', () => {
   it('generic heuristic parses "Rs. N" without leaving a stray dot', () => {
     const { results } = runScraper(genericSearchScraper, 'myntra-search.html', 'https://www.myntra.com/nike');
     expect(results.map((r) => r.price)).toEqual([2439, 3436]);
+  });
+});
+
+describe('beauty retailer search scrapers (Nykaa, Purplle, Tira)', () => {
+  it('nykaa: uses the full alt title and the discounted price, strips tracking params', () => {
+    const { results } = runScraper(nykaaSearchScraper, 'nykaa-search.html', 'https://www.nykaa.com/search/result/?q=nivea');
+    expect(results.map((r) => r.price)).toEqual([363, 1200]);
+    expect(results[0].title).toBe('NIVEA Soft Moisturizing Cream Vitamin E for Face, Hands & Body');
+    expect(results[0].url).toBe('https://www.nykaa.com/nivea-soft-cream/p/6004');
+    expect(results[0].rating).toBe(5);
+  });
+
+  it('purplle: reads the current price (not the MRP) and a whitespace-normalised title with size', () => {
+    const { results } = runScraper(purplleSearchScraper, 'purplle-search.html', 'https://www.purplle.com/search?q=nivea');
+    expect(results.map((r) => r.price)).toEqual([543, 194]);
+    expect(results[0].title).toBe('Nivea Soft Moisturizing Cream - 300 ml');
+    expect(results[0].url).toBe('https://www.purplle.com/product/nivea-soft-cr-me-300-ml');
+    expect(results[0].rating).toBe(4.4);
+  });
+
+  it('tira: prefixes the brand, handles comma prices, ignores coupon and MRP', () => {
+    const { results } = runScraper(tiraSearchScraper, 'tira-search.html', 'https://www.tirabeauty.com/products/?q=nivea');
+    expect(results.map((r) => r.price)).toEqual([348, 1449]);
+    expect(results[0].title).toBe('Nivea Soft Light Moisturizer Cream (300 ml)');
+    expect(results[0].url).toBe('https://www.tirabeauty.com/product/nivea-soft-light-moisturizer-cream-300ml-abc123');
   });
 });

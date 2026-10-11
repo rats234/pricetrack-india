@@ -48,4 +48,25 @@ describe('generic extractor on live-observed JSON-LD quirks', () => {
     const p = runExtractor({ fixture: 'croma-product.html', url: 'https://www.croma.com/x/p/1', scripts: scripts('croma') });
     expect(p.price).toBe(1099);
   });
+
+  it('nykaa: string brand, numeric price, no rating', () => {
+    const p = runExtractor({ fixture: 'nykaa-product.html', url: 'https://www.nykaa.com/x/p/6004', scripts: scripts('nykaa') });
+    expect(p.brand).toBe('NIVEA');
+    expect(p.price).toBe(363);
+    expect(p.rating).toBeNull();
+  });
+
+  it('purplle: object brand, string price, numeric rating', () => {
+    const p = runExtractor({ fixture: 'purplle-product.html', url: 'https://www.purplle.com/product/x', scripts: scripts('purplle') });
+    expect(p.brand).toBe('Nivea');
+    expect(p.price).toBe(543);
+    expect(p.rating).toBe(4.4);
+    expect(p.ratingCount).toBe(5329);
+  });
+
+  it('tira: no Product JSON-LD, so title comes from the h1 and price from the current-price element', () => {
+    const p = runExtractor({ fixture: 'tira-product.html', url: 'https://www.tirabeauty.com/product/x', scripts: scripts('tira') });
+    expect(p.title).toBe('Nivea Soft Light Moisturizer Cream (100ml)');
+    expect(p.price).toBe(252);
+  });
 });

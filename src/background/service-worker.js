@@ -7,6 +7,9 @@ import { genericSearchScraper } from './search-scrapers/generic.js';
 import { myntraSearchScraper } from './search-scrapers/myntra.js';
 import { ajioSearchScraper } from './search-scrapers/ajio.js';
 import { relianceDigitalSearchScraper } from './search-scrapers/reliance-digital.js';
+import { nykaaSearchScraper } from './search-scrapers/nykaa.js';
+import { purplleSearchScraper } from './search-scrapers/purplle.js';
+import { tiraSearchScraper } from './search-scrapers/tira.js';
 
 const SCRAPERS = {
   amazon: amazonSearchScraper,
@@ -17,6 +20,9 @@ const SCRAPERS = {
   ajio: ajioSearchScraper,
   croma: genericSearchScraper,
   'reliance-digital': relianceDigitalSearchScraper,
+  nykaa: nykaaSearchScraper,
+  purplle: purplleSearchScraper,
+  tira: tiraSearchScraper,
 };
 const TAB_LOAD_TIMEOUT_MS = 15000;
 const RENDER_SETTLE_MS = 1200; // let SPA search results finish client-side rendering after "complete"
@@ -39,14 +45,18 @@ async function findCheaper(sourceProduct) {
   const targets = getOtherRetailers(sourceProduct.retailerId);
   const candidatesByRetailer = {};
 
-  for (const retailer of targets) {
-    try {
-      candidatesByRetailer[retailer.id] = await fetchCandidatesForRetailer(retailer, sourceProduct);
-    } catch (err) {
-      console.warn(`[PriceTrack] ${retailer.id} search failed`, err);
-      candidatesByRetailer[retailer.id] = [];
-    }
-  }
+  // Retailers are searched in parallel (each in its own background tab) so the
+  // wait doesn't grow with the number of supported sites.
+  await Promise.all(
+    targets.map(async (retailer) => {
+      try {
+        candidatesByRetailer[retailer.id] = await fetchCandidatesForRetailer(retailer, sourceProduct);
+      } catch (err) {
+        console.warn(`[PriceTrack] ${retailer.id} search failed`, err);
+        candidatesByRetailer[retailer.id] = [];
+      }
+    }),
+  );
 
   return buildComparison(sourceProduct, candidatesByRetailer);
 }

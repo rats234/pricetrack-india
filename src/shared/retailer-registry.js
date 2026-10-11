@@ -58,6 +58,33 @@ export const RETAILERS = [
       return `https://www.reliancedigital.in/products?q=${encodeURIComponent(query)}`;
     },
   },
+  // Beauty/personal-care retailers, checked against live pages on 2026-10-11.
+  {
+    id: 'nykaa',
+    name: 'Nykaa',
+    hostPattern: /(^|\.)nykaa\.com$/,
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      return `https://www.nykaa.com/search/result/?q=${encodeURIComponent(query)}&root=search&searchType=Manual`;
+    },
+  },
+  {
+    id: 'purplle',
+    name: 'Purplle',
+    hostPattern: /(^|\.)purplle\.com$/,
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      // The site's own search box navigates with a double-encoded q (%2520 for
+      // a space); that is the form reproduced here.
+      return `https://www.purplle.com/search?q=${encodeURIComponent(encodeURIComponent(query))}`;
+    },
+  },
+  {
+    id: 'tira',
+    name: 'Tira',
+    hostPattern: /(^|\.)tirabeauty\.com$/,
+    buildSearchUrl(product, query = buildSearchQuery(product)) {
+      return `https://www.tirabeauty.com/products/?q=${encodeURIComponent(query)}`;
+    },
+  },
 ];
 
 export function getRetailer(id) {

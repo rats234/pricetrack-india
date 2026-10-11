@@ -53,6 +53,9 @@ describe('buildSearchUrl', () => {
     ajio: 'www.ajio.com',
     croma: 'www.croma.com',
     'reliance-digital': 'www.reliancedigital.in',
+    nykaa: 'www.nykaa.com',
+    purplle: 'www.purplle.com',
+    tira: 'www.tirabeauty.com',
   };
 
   it.each(Object.entries(unverifiedHosts))('builds a well-formed search URL for %s (unverified)', (id, host) => {
