@@ -42,50 +42,67 @@ export function createProductSignature({
   };
 }
 
+// Compact query: brand + model (or the product-name part of the title, first
+// few words) + storage/colour. Used as the last-resort fallback search.
 export function buildSearchQuery(product) {
-  const parts = [];
-  if (product.brand) parts.push(product.brand);
-  if (product.model) parts.push(product.model);
-  if (!product.model && product.title) {
-    // Use the title's own words (so "T-shirt" stays intact, unlike tokenize()),
-    // dropping any brand words already added above.
-    const brandWords = new Set(tokenize(product.brand));
-    const words = product.title
-      .replace(/[()\[\],;|]/g, ' ')
-      .split(/\s+/)
-      .map((w) => w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''))
-      .filter((w) => w && !brandWords.has(normalizeText(w)));
-    parts.push(...words.slice(0, 7));
-  }
-  if (product.variant?.storage) parts.push(product.variant.storage);
-  if (product.variant?.color) parts.push(product.variant.color);
-  const q = parts.filter(Boolean).join(' ').trim();
+  const base = product.model || productNameHead(product.title);
+  const q = dedupeWords([product.brand, base, product.variant?.storage, product.variant?.color], 8)
+    .replace(/\s+(?:in|of|and|the|a|an|to|on)$/i, '');
   return q || product.title || '';
 }
 
-// Ordered search texts to try on another retailer, richest first: brand + model
-// + the full title + every variant detail, then the compact brand/model/variant
-// query. The richest text finds the exact item when the other site indexes it
-// the same way; very long queries often return nothing on a different
-// retailer, so the caller falls back to the next one when no match comes back.
-export function buildSearchQueries(product) {
+// Cuts a marketing-heavy title down to the product name itself, e.g. "The True
+// Therapy 10% Azelaic Acid Face Serum with Witch Hazel Extract for Acne ... 30 ml"
+// -> "True Therapy 10% Azelaic Acid Face Serum". Stops at the first descriptive
+// clause ("with ...", "for ...", a comma, dash or bracket).
+function productNameHead(title) {
+  const head = String(title || '')
+    .split(/\s+(?:with|for|by|suitable|ideal|helps)\s+|[,|(\[]|\s[-–—]\s/i)[0]
+    .trim();
+  return head.replace(/^(the|a|an)\s+/i, '');
+}
+
+// Quantities/sizes anywhere in the title ("30 ml", "100 g", "pack of 2",
+// "128GB") — the details that tell variants of one product apart, and that a
+// truncated title would lose.
+function extractQuantities(text) {
+  const out = [];
+  const re = /\b(\d+(?:\.\d+)?\s?(?:ml|l|ltr|g|gm|gms|kg|oz|gb|tb|mah|inch|cm|mm|pcs|tablets|capsules))\b|\b((?:pack|set|combo) of \d+)\b/gi;
+  for (const m of String(text || '').matchAll(re)) out.push(m[1] || m[2]);
+  return out;
+}
+
+function dedupeWords(parts, limit) {
   const seen = new Set();
   const words = [];
-  const add = (text) => {
-    for (const raw of String(text || '').replace(/[()\[\],;|]/g, ' ').split(/\s+/)) {
-      const w = raw.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+  for (const part of parts) {
+    for (const raw of String(part || '').replace(/[()\[\],;|]/g, ' ').split(/\s+/)) {
+      // keep a trailing % ("10%") — it identifies the strength
+      const w = raw.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}%]+$/gu, '');
       const key = normalizeText(w);
       if (!w || !key || seen.has(key)) continue;
       seen.add(key);
       words.push(w);
     }
-  };
-  add(product.brand);
-  add(product.model);
-  add(product.title);
-  add(product.variant?.storage);
-  add(product.variant?.color);
-  const full = words.slice(0, 16).join(' ').trim();
+  }
+  return words.slice(0, limit).join(' ').trim();
+}
+
+// Ordered search texts to try on another retailer. Retailers' search engines
+// choke on long marketing titles, so the first query is the product *name* plus
+// every identifying detail (brand, model, strength, size, colour, storage); the
+// second adds more of the title; the last is the bare brand + model/name.
+export function buildSearchQueries(product) {
+  const head = productNameHead(product.title);
+  const qty = extractQuantities(product.title);
+  const detailed = dedupeWords(
+    [product.brand, product.model, head, ...qty, product.variant?.storage, product.variant?.color],
+    14,
+  );
+  const wide = dedupeWords(
+    [product.brand, product.model, product.title, product.variant?.storage, product.variant?.color],
+    16,
+  );
   const compact = buildSearchQuery(product);
-  return [...new Set([full, compact].filter(Boolean))];
+  return [...new Set([detailed, wide, compact].filter(Boolean))];
 }

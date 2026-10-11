@@ -104,10 +104,20 @@ describe('buildSearchQueries', () => {
     expect(full.split(' ').filter((w) => w.toLowerCase() === 'redmi')).toHaveLength(1);
   });
 
-  it('falls back to a shorter compact query', () => {
+  it('offers progressively wider fallbacks, most specific first', () => {
     const queries = buildSearchQueries(phone);
-    expect(queries).toHaveLength(2);
-    expect(queries[1].length).toBeLessThan(queries[0].length);
+    expect(queries.length).toBeGreaterThanOrEqual(2);
+    expect(queries[0]).toContain('128GB');
+  });
+
+  it('keeps strength and size and drops marketing clauses for long titles', () => {
+    const [first] = buildSearchQueries({
+      brand: 'True Therapy',
+      model: '',
+      title: 'The True Therapy 10% Azelaic Acid Face Serum with Witch Hazel Extract for Anti-inflammatory, Cystic Acne, Rosacea, Hyperpigmentation – 30 ml',
+      variant: { color: '', size: '', storage: '' },
+    });
+    expect(first).toBe('True Therapy 10% Azelaic Acid Face Serum 30 ml');
   });
 
   it('uses a custom query in the retailer search URL', () => {
@@ -117,13 +127,13 @@ describe('buildSearchQueries', () => {
 });
 
 describe('buildSearchQueries punctuation', () => {
-  it('splits brackets so "Mic(Charcoal Black)" becomes clean words', () => {
+  it('cuts at the bracket so "Mic(Charcoal Black)" never leaks a broken fragment', () => {
     const [full] = buildSearchQueries({
       brand: 'boAt',
       model: '',
       title: 'boAt Bassheads 102 in Ear Wired Earphones with Mic(Charcoal Black)',
       variant: { color: 'Black', size: '', storage: '' },
     });
-    expect(full).toBe('boAt Bassheads 102 in Ear Wired Earphones with Mic Charcoal Black');
+    expect(full).toBe('boAt Bassheads 102 in Ear Wired Earphones Black');
   });
 });
