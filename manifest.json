@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PriceTrack India",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Find out if a product you're viewing on an Indian retailer is cheaper elsewhere.",
   "icons": {
     "16": "icons/icon16.png",

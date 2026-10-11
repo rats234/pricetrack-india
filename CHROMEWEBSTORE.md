@@ -9,14 +9,14 @@ PriceTrack India
 
 **Short Description** [REQUIRED]
 <!-- Max 132 characters. -->
-Checks if the product you're viewing is cheaper on another Indian store: Amazon, Flipkart, Myntra, AJIO, Croma or Reliance Digital.
+Checks if the product you're viewing is cheaper on another Indian store: Amazon, Flipkart, Myntra, AJIO, Croma, Reliance Digital, Nykaa, Purplle or Tira.
 
 **Detailed Description** [REQUIRED]
 PriceTrack India checks whether the product you're currently viewing is cheaper on another supported Indian retailer.
 
 Click "Find cheaper" on a product page and PriceTrack reads the product's details, searches the other supported retailers, and tells you whether it found the same item or just a similar one — labeled "Same product" or "Possible match, verify" so you always know how sure it is before you trust a price comparison. It shows the retailer, price, and savings, with a link straight to the listing.
 
-To use it: open a product page on Amazon.in, Flipkart, Myntra, AJIO, Croma or Reliance Digital, click the PriceTrack icon, then click "Find cheaper." PriceTrack only looks things up when you click the button — it never runs in the background or on a timer.
+To use it: open a product page on any supported store (Amazon.in, Flipkart, Myntra, AJIO, Croma, Reliance Digital, Nykaa, Purplle or Tira), click the PriceTrack icon, then click "Find cheaper." PriceTrack only looks things up when you click the button — it never runs in the background or on a timer.
 
 PriceTrack doesn't collect, store remotely, or sell any personal data. Everything — the product it last looked at, your settings — stays on your own device. It never asks for your accounts, payment details, or browsing history, and it never completes a purchase on your behalf.
 
@@ -56,6 +56,9 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 | `https://www.ajio.com/*` | host_permissions | Same as above, for AJIO. |
 | `https://www.croma.com/*` | host_permissions | Same as above, for Croma. |
 | `https://www.reliancedigital.in/*` | host_permissions | Same as above, for Reliance Digital. |
+| `https://www.nykaa.com/*` | host_permissions | Same as above, for Nykaa. |
+| `https://www.purplle.com/*` | host_permissions | Same as above, for Purplle. |
+| `https://www.tirabeauty.com/*` | host_permissions | Same as above, for Tira. |
 
 ## Privacy & Data Use
 
@@ -109,6 +112,7 @@ rats234@gmail.com (displayed publicly on the store listing)
 | Version | Date | Changes | Status |
 |---------|------|---------|--------|
 | 0.1.0 | 2026-10-04 | Initial MVP: Amazon India + Flipkart product extraction, cross-retailer search, rule-based same-product matching with confidence labeling. Not yet submitted. | Draft |
+| 0.3.0 | 2026-10-11 | Added Nykaa, Purplle, Tira; "not found" list with manual-search links; detailed-then-compact search queries; parallel retailer searches; beauty/clothing matching fixes. | Ready to submit once the [FILL IN] items are done |
 | 0.2.0 | 2026-10-10 | Added Myntra, AJIO, Croma, Reliance Digital; search scraping and product extraction checked against live pages (fixed Reliance Digital search URL, Myntra price parsing, malformed JSON-LD handling). Fixed a matching-engine false "cheaper" result across RAM/storage variants. Build with `scripts/build-zip.sh`. | Ready to submit once the [FILL IN] items are done |
 
 ## Review Notes

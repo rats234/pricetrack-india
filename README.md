@@ -4,8 +4,8 @@ MV3 Chrome extension that checks whether a product you're viewing on an Indian
 retailer is cheaper on another supported retailer. Client-side only — no backend,
 no paid APIs, no external LLM.
 
-Supports **Amazon India**, **Flipkart**, **Myntra**, **AJIO**, **Croma**, and
-**Reliance Digital**. All six have now been checked against real, live pages
+Supports **Amazon India**, **Flipkart**, **Myntra**, **AJIO**, **Croma**,
+**Reliance Digital**, **Nykaa**, **Purplle**, and **Tira**. All nine have now been checked against real, live pages
 (Myntra, AJIO, Croma and Reliance Digital on 2026-10-09 — search-result
 scraping and product-page extraction; see "Verified against live pages" below).
 The popup click-through has not yet been run end to end on those four. See
@@ -196,6 +196,23 @@ Amazon/Myntra/AJIO apparel pages; some Myntra/AJIO pages expose no rating;
 Croma/Reliance searches for non-electronics return unrelated items (filtered by
 the matcher). No GTIN or model exists for most clothing, so those matches can
 never be "confirmed".
+
+## Beauty retailers and "not found" (2026-10-11)
+
+Added **Nykaa, Purplle and Tira** after a live check of each site's search and
+product markup (no bot protection encountered). The popup now lists retailers
+that were searched with no acceptable match, each with a link to that site's own
+search so the user can double-check. Retailers are searched in parallel; each
+tries a detailed query first (product name + strength/size/colour), then wider
+and compact fallbacks.
+
+Brand-owned sites (e.g. thetruetherapy.com, which does list items the
+marketplaces don't) are **not** searched: a brand's domain can't be derived
+reliably, every site differs, and reading arbitrary sites would need
+all-sites permission. Many small Indian brands run on Shopify, whose public
+`/search/suggest.json` endpoint works from the page (confirmed on two brands),
+so a per-brand opt-in is feasible later. For now the "Also check Google" button
+covers brand sites.
 
 ## Known MVP limitations
 

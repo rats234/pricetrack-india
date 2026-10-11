@@ -1,6 +1,6 @@
 {
   "name": "pricetrack",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "India price-comparison Chrome extension (MV3, client-side only)",
   "type": "module",

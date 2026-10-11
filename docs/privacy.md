@@ -5,7 +5,7 @@ Last updated: 2026-10-10
 PriceTrack India does not collect, sell, or transmit your personal data to the developer or any third party. It has no server, no accounts, no analytics, and no tracking.
 
 ## What the extension reads
-- When you open a product page on a supported retailer (Amazon India, Flipkart, Myntra, AJIO, Croma, Reliance Digital), it reads the product's title, brand, model, price and rating from that page so it can compare them.
+- When you open a product page on a supported retailer (Amazon India, Flipkart, Myntra, AJIO, Croma, Reliance Digital, Nykaa, Purplle, Tira), it reads the product's title, brand, model, price and rating from that page so it can compare them.
 - Only when you click **Find cheaper**, it opens the other supported retailers' own search pages in background tabs and reads the publicly visible product titles, prices and links, then closes those tabs. It never runs on a timer or in the background on its own.
 
 ## What is stored
