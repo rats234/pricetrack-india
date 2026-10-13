@@ -20,7 +20,7 @@ To use it: open a product page on any supported store (Amazon.in, Flipkart, Mynt
 
 PriceTrack doesn't collect, store remotely, or sell any personal data. Everything — the product it last looked at, your settings — stays on your own device. It never asks for your accounts, payment details, or browsing history, and it never completes a purchase on your behalf.
 
-Found a bug or have feedback? Email rats234@gmail.com
+Found a bug or have feedback? Email rats234@gmail.com or open an issue at https://github.com/rats234/pricetrack-india/issues
 
 **Category** [REQUIRED]
 Shopping
@@ -86,7 +86,7 @@ Recommend capturing: (1) the popup on a real Amazon.in/Flipkart product page sho
 ## Privacy Policy
 
 **Privacy Policy URL** [REQUIRED]
-[FILL IN — text is written in `docs/privacy.md`; it must be hosted at a live public URL (e.g. GitHub Pages) and the contact email filled in before submission.]
+https://rats234.github.io/pricetrack-india/privacy
 
 ## Distribution
 
